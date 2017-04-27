@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<head>
+    <title>Years You Have Left to Live, Probably</title>
+    <!-- <link rel="stylesheet" href="style_print.css" media="print" type="text/css" /> -->
+    <link rel="stylesheet" href="style.css" media="screen and (min-device-width: 481px)" type="text/css" />
+    <link type="text/css" rel="stylesheet" media="only screen and (max-device-width: 480px)" href="style_mobile.css" />
+    <!-- new androids -->
+    <link rel="stylesheet" media="screen and (-webkit-device-pixel-ratio:0.75)" href="style_mobile.css" />
+    <link rel="stylesheet" href="style_mobile.css" media="handheld" type="text/css" />
+    <!--[if IE]>
+    <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
+    <![endif]-->
+    <!-- tell iPhone not to shrink mobile website -->
+    <meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+
+    <link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+</head>
+<div id="main-wrapper">
+
+    <div id="line-chart"></div>
+
+    <div id="bars"></div>
+    <!--
+        <div id="debug"></div>
+        <div id="age">
+            <div id="agevalue"></div>
+            <div id="sliderholder"></div>
+        </div>
+    -->
+</div>
+
+<script src="d3-3-5-5.min.js"></script>
+<script src="Simulate.js"></script>
+
+<script>
+var USER_AGE = 62;
+var USER_SEX = 'female';
+var CURR_AGE = 0;
+USER_DURATION = 32;
+CURR_AGE = USER_AGE;
+var width_base =  window.innerWidth;
+var height_base = window.innerHeight;
+
+var circle_radius = width_base*.005;
+// console.log('circle radius',circle_radius);
+if ( circle_radius < 6 ) {
+   circle_radius = 6;
+}
+var AGE_LOWER = Math.max(0,USER_AGE -30);
+
+// Set dimensions - chart if offset down and to the right so make widths and heights 2*smaller
+var margin = {top: 35, right: 0.05*width_base, bottom: 40, left: 0.05*width_base},
+    width = width_base - 2*margin.left - margin.right,
+    height = height_base - 2*margin.top - margin.bottom;
+
+// Set ranges
+var x = d3.scale.linear()
+    .domain([0, 120-USER_AGE])
+    .range([0,width]);
+
+var y = d3.scale.linear()
+    .domain([0,1])
+    .range([height, 0]);
+
+// Define axes
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom")
+    .ticks(12)
+    .tickFormat(function(d) {
+        return "+" + d;
+
+        })
+        ;
+//    .tickSize(10);
+
+
+var yAxis = d3.svg.axis().scale(y)
+    .orient("left")
+    .ticks(5)
+    .tickFormat(function(d) {
+        return (d*100) + "%";
+    })
+    .tickSize(20);
+
+// Define line this is a helper function
+var line = d3.svg.line()
+    .x(function(d) {
+        return x(d.age-USER_AGE);
+        })
+    .y(function(d)
+        { return y(d.this_prob); });
+
+// Define line
+//var line = d3.svg.line()
+//    .x(function(d) { return x(d.age); })
+//    .y(function(d) {
+//        if (USER_SEX == "female") return y(1-d.female_prob_death);
+//        else return y(1-d.male_prob_death);
+//    });
+
+
+var life =[
+{  "age":0,"male_prob_death":0.006569,"male_years_left":76.18,"female_prob_death":0.005513,"female_years_left":80.95,"this_prob":1.0},
+{  "age":1,"male_prob_death":0.000444,"male_years_left":75.69,"female_prob_death":0.00382,"female_years_left":80.39,"this_prob":1.0},
+{  "age":2,"male_prob_death":0.000291,"male_years_left":74.72,"female_prob_death":0.000218,"female_years_left":79.42,"this_prob":1.0},
+{  "age":3,"male_prob_death":0.000226,"male_years_left":73.74,"female_prob_death":0.000166,"female_years_left":78.44,"this_prob":1.0},
+{  "age":4,"male_prob_death":0.000173,"male_years_left":72.76,"female_prob_death":0.000143,"female_years_left":77.45,"this_prob":1.0},
+{  "age":5,"male_prob_death":0.000158,"male_years_left":71.77,"female_prob_death":0.000127,"female_years_left":76.47,"this_prob":1.0},
+{  "age":6,"male_prob_death":0.000147,"male_years_left":70.78,"female_prob_death":0.000116,"female_years_left":75.48,"this_prob":1.0},
+{  "age":7,"male_prob_death":0.000136,"male_years_left":69.79,"female_prob_death":0.000106,"female_years_left":74.48,"this_prob":1.0},
+{  "age":8,"male_prob_death":0.000121,"male_years_left":68.8,"female_prob_death":0.000098,"female_years_left":73.49,"this_prob":1.0},
+{  "age":9,"male_prob_death":0.000104,"male_years_left":67.81,"female_prob_death":0.000091,"female_years_left":72.5,"this_prob":1.0},
+{  "age":10,"male_prob_death":0.000092,"male_years_left":66.82,"female_prob_death":0.000086,"female_years_left":71.51,"this_prob":1.0},
+{  "age":11,"male_prob_death":0.000097,"male_years_left":65.82,"female_prob_death":0.000089,"female_years_left":70.51,"this_prob":1.0},
+{  "age":12,"male_prob_death":0.000134,"male_years_left":64.83,"female_prob_death":0.000102,"female_years_left":69.52,"this_prob":1.0},
+{  "age":13,"male_prob_death":0.00021,"male_years_left":63.84,"female_prob_death":0.000128,"female_years_left":68.52,"this_prob":1.0},
+{  "age":14,"male_prob_death":0.000317,"male_years_left":62.85,"female_prob_death":0.000164,"female_years_left":67.53,"this_prob":1.0},
+{  "age":15,"male_prob_death":0.000433,"male_years_left":61.87,"female_prob_death":0.000205,"female_years_left":66.54,"this_prob":1.0},
+{  "age":16,"male_prob_death":0.000547,"male_years_left":60.9,"female_prob_death":0.000246,"female_years_left":65.56,"this_prob":1.0},
+{  "age":17,"male_prob_death":0.000672,"male_years_left":59.93,"female_prob_death":0.000285,"female_years_left":64.57,"this_prob":1.0},
+{  "age":18,"male_prob_death":0.000805,"male_years_left":58.97,"female_prob_death":0.000319,"female_years_left":63.59,"this_prob":1.0},
+{  "age":19,"male_prob_death":0.000941,"male_years_left":58.02,"female_prob_death":0.00035,"female_years_left":62.61,"this_prob":1.0},
+{  "age":20,"male_prob_death":0.001084,"male_years_left":57.07,"female_prob_death":0.000383,"female_years_left":61.63,"this_prob":1.0},
+{  "age":21,"male_prob_death":0.001219,"male_years_left":56.13,"female_prob_death":0.000417,"female_years_left":60.66,"this_prob":1.0},
+{  "age":22,"male_prob_death":0.001314,"male_years_left":55.2,"female_prob_death":0.000446,"female_years_left":59.68,"this_prob":1.0},
+{  "age":23,"male_prob_death":0.001357,"male_years_left":54.27,"female_prob_death":0.000469,"female_years_left":58.71,"this_prob":1.0},
+{  "age":24,"male_prob_death":0.001362,"male_years_left":53.35,"female_prob_death":0.000487,"female_years_left":57.74,"this_prob":1.0},
+{  "age":25,"male_prob_death":0.001353,"male_years_left":52.42,"female_prob_death":0.000505,"female_years_left":56.76,"this_prob":1.0},
+{  "age":26,"male_prob_death":0.00135,"male_years_left":51.49,"female_prob_death":0.000525,"female_years_left":55.79,"this_prob":1.0},
+{  "age":27,"male_prob_death":0.001353,"male_years_left":50.56,"female_prob_death":0.000551,"female_years_left":54.82,"this_prob":1.0},
+{  "age":28,"male_prob_death":0.001371,"male_years_left":49.63,"female_prob_death":0.000585,"female_years_left":53.85,"this_prob":1.0},
+{  "age":29,"male_prob_death":0.001399,"male_years_left":48.69,"female_prob_death":0.000626,"female_years_left":52.88,"this_prob":1.0},
+{  "age":30,"male_prob_death":0.001432,"male_years_left":47.76,"female_prob_death":0.000672,"female_years_left":51.92,"this_prob":1.0},
+{  "age":31,"male_prob_death":0.001464,"male_years_left":46.83,"female_prob_death":0.00072,"female_years_left":50.95,"this_prob":1.0},
+{  "age":32,"male_prob_death":0.001497,"male_years_left":45.9,"female_prob_death":0.000766,"female_years_left":49.99,"this_prob":1.0},
+{  "age":33,"male_prob_death":0.00153,"male_years_left":44.96,"female_prob_death":0.000806,"female_years_left":49.02,"this_prob":1.0},
+{  "age":34,"male_prob_death":0.001568,"male_years_left":44.03,"female_prob_death":0.000846,"female_years_left":48.06,"this_prob":1.0},
+{  "age":35,"male_prob_death":0.001617,"male_years_left":43.1,"female_prob_death":0.000891,"female_years_left":47.1,"this_prob":1.0},
+{  "age":36,"male_prob_death":0.001682,"male_years_left":42.17,"female_prob_death":0.000946,"female_years_left":46.15,"this_prob":1.0},
+{  "age":37,"male_prob_death":0.001759,"male_years_left":41.24,"female_prob_death":0.001013,"female_years_left":45.19,"this_prob":1.0},
+{  "age":38,"male_prob_death":0.001852,"male_years_left":40.31,"female_prob_death":0.001094,"female_years_left":44.23,"this_prob":1.0},
+{  "age":39,"male_prob_death":0.001963,"male_years_left":39.39,"female_prob_death":0.00119,"female_years_left":43.28,"this_prob":1.0},
+{  "age":40,"male_prob_death":0.002092,"male_years_left":38.46,"female_prob_death":0.001296,"female_years_left":42.33,"this_prob":1.0},
+{  "age":41,"male_prob_death":0.002246,"male_years_left":37.54,"female_prob_death":0.001413,"female_years_left":41.39,"this_prob":1.0},
+{  "age":42,"male_prob_death":0.002436,"male_years_left":36.62,"female_prob_death":0.001549,"female_years_left":40.45,"this_prob":1.0},
+{  "age":43,"male_prob_death":0.002669,"male_years_left":35.71,"female_prob_death":0.001706,"female_years_left":39.51,"this_prob":1.0},
+{  "age":44,"male_prob_death":0.002942,"male_years_left":34.81,"female_prob_death":0.001881,"female_years_left":38.57,"this_prob":1.0},
+{  "age":45,"male_prob_death":0.003244,"male_years_left":33.91,"female_prob_death":0.002069,"female_years_left":37.65,"this_prob":1.0},
+{  "age":46,"male_prob_death":0.003571,"male_years_left":33.02,"female_prob_death":0.00227,"female_years_left":36.72,"this_prob":1.0},
+{  "age":47,"male_prob_death":0.003926,"male_years_left":32.13,"female_prob_death":0.002486,"female_years_left":35.81,"this_prob":1.0},
+{  "age":48,"male_prob_death":0.004309,"male_years_left":31.26,"female_prob_death":0.002716,"female_years_left":34.89,"this_prob":1.0},
+{  "age":49,"male_prob_death":0.004719,"male_years_left":30.39,"female_prob_death":0.00296,"female_years_left":33.99,"this_prob":1.0},
+{  "age":50,"male_prob_death":0.005156,"male_years_left":29.53,"female_prob_death":0.003226,"female_years_left":33.09,"this_prob":1.0},
+{  "age":51,"male_prob_death":0.005622,"male_years_left":28.68,"female_prob_death":0.003505,"female_years_left":32.19,"this_prob":1.0},
+{  "age":52,"male_prob_death":0.006121,"male_years_left":27.84,"female_prob_death":0.003779,"female_years_left":31.3,"this_prob":1.0},
+{  "age":53,"male_prob_death":0.006656,"male_years_left":27.01,"female_prob_death":0.00404,"female_years_left":30.42,"this_prob":1.0},
+{  "age":54,"male_prob_death":0.007222,"male_years_left":26.19,"female_prob_death":0.004301,"female_years_left":29.54,"this_prob":1.0},
+{  "age":55,"male_prob_death":0.007844,"male_years_left":25.38,"female_prob_death":0.004592,"female_years_left":28.67,"this_prob":1.0},
+{  "age":56,"male_prob_death":0.008493,"male_years_left":24.57,"female_prob_death":0.00492,"female_years_left":27.8,"this_prob":1.0},
+{  "age":57,"male_prob_death":0.009116,"male_years_left":23.78,"female_prob_death":0.005266,"female_years_left":26.93,"this_prob":1.0},
+{  "age":58,"male_prob_death":0.00969,"male_years_left":22.99,"female_prob_death":0.00563,"female_years_left":26.07,"this_prob":1.0},
+{  "age":59,"male_prob_death":0.010253,"male_years_left":22.21,"female_prob_death":0.006028,"female_years_left":25.22,"this_prob":1.0},
+{  "age":60,"male_prob_death":0.010872,"male_years_left":21.44,"female_prob_death":0.006479,"female_years_left":24.37,"this_prob":1.0},
+{  "age":61,"male_prob_death":0.011591,"male_years_left":20.67,"female_prob_death":0.007001,"female_years_left":23.52,"this_prob":1.0},
+{  "age":62,"male_prob_death":0.012403,"male_years_left":19.9,"female_prob_death":0.007602,"female_years_left":22.68,"this_prob":1.0},
+{  "age":63,"male_prob_death":0.013325,"male_years_left":19.15,"female_prob_death":0.008294,"female_years_left":21.85,"this_prob":1.0},
+{  "age":64,"male_prob_death":0.01437,"male_years_left":18.4,"female_prob_death":0.009082,"female_years_left":21.03,"this_prob":1.0},
+{  "age":65,"male_prob_death":0.015553,"male_years_left":17.66,"female_prob_death":0.00999,"female_years_left":20.22,"this_prob":1.0},
+{  "age":66,"male_prob_death":0.016878,"male_years_left":16.93,"female_prob_death":0.011005,"female_years_left":19.42,"this_prob":1.0},
+{  "age":67,"male_prob_death":0.018348,"male_years_left":16.21,"female_prob_death":0.012097,"female_years_left":18.63,"this_prob":1.0},
+{  "age":68,"male_prob_death":0.019969,"male_years_left":15.51,"female_prob_death":0.013261,"female_years_left":17.85,"this_prob":1.0},
+{  "age":69,"male_prob_death":0.021766,"male_years_left":14.81,"female_prob_death":0.014529,"female_years_left":17.09,"this_prob":1.0},
+{  "age":70,"male_prob_death":0.02384,"male_years_left":14.13,"female_prob_death":0.015991,"female_years_left":16.33,"this_prob":1.0},
+{  "age":71,"male_prob_death":0.026162,"male_years_left":13.47,"female_prob_death":0.017662,"female_years_left":15.59,"this_prob":1.0},
+{  "age":72,"male_prob_death":0.028625,"male_years_left":12.81,"female_prob_death":0.019486,"female_years_left":14.86,"this_prob":1.0},
+{  "age":73,"male_prob_death":0.031204,"male_years_left":12.18,"female_prob_death":0.021467,"female_years_left":14.14,"this_prob":1.0},
+{  "age":74,"male_prob_death":0.033997,"male_years_left":11.55,"female_prob_death":0.023658,"female_years_left":13.44,"this_prob":1.0},
+{  "age":75,"male_prob_death":0.0372,"male_years_left":10.94,"female_prob_death":0.026223,"female_years_left":12.76,"this_prob":1.0},
+{  "age":76,"male_prob_death":0.040898,"male_years_left":10.34,"female_prob_death":0.029159,"female_years_left":12.09,"this_prob":1.0},
+{  "age":77,"male_prob_death":0.04504,"male_years_left":9.76,"female_prob_death":0.032331,"female_years_left":11.44,"this_prob":1.0},
+{  "age":78,"male_prob_death":0.049664,"male_years_left":9.2,"female_prob_death":0.035725,"female_years_left":10.8,"this_prob":1.0},
+{  "age":79,"male_prob_death":0.054844,"male_years_left":8.66,"female_prob_death":0.039469,"female_years_left":10.18,"this_prob":1.0},
+{  "age":80,"male_prob_death":0.060801,"male_years_left":8.13,"female_prob_death":0.043828,"female_years_left":9.58,"this_prob":1.0},
+{  "age":81,"male_prob_death":0.067509,"male_years_left":7.62,"female_prob_death":0.048896,"female_years_left":9,"this_prob":1.0},
+{  "age":82,"male_prob_death":0.074779,"male_years_left":7.14,"female_prob_death":0.054577,"female_years_left":8.43,"this_prob":1.0},
+{  "age":83,"male_prob_death":0.082589,"male_years_left":6.68,"female_prob_death":0.060909,"female_years_left":7.89,"this_prob":1.0},
+{  "age":84,"male_prob_death":0.091135,"male_years_left":6.23,"female_prob_death":0.068019,"female_years_left":7.37,"this_prob":1.0},
+{  "age":85,"male_prob_death":0.10068,"male_years_left":5.81,"female_prob_death":0.076054,"female_years_left":6.87,"this_prob":1.0},
+{  "age":86,"male_prob_death":0.111444,"male_years_left":5.4,"female_prob_death":0.085148,"female_years_left":6.4,"this_prob":1.0},
+{  "age":87,"male_prob_death":0.123571,"male_years_left":5.02,"female_prob_death":0.095395,"female_years_left":5.94,"this_prob":1.0},
+{  "age":88,"male_prob_death":0.137126,"male_years_left":4.65,"female_prob_death":0.106857,"female_years_left":5.52,"this_prob":1.0},
+{  "age":89,"male_prob_death":0.152092,"male_years_left":4.31,"female_prob_death":0.119557,"female_years_left":5.12,"this_prob":1.0},
+{  "age":90,"male_prob_death":0.168426,"male_years_left":4,"female_prob_death":0.133502,"female_years_left":4.75,"this_prob":1.0},
+{  "age":91,"male_prob_death":0.186063,"male_years_left":3.7,"female_prob_death":0.148685,"female_years_left":4.4,"this_prob":1.0},
+{  "age":92,"male_prob_death":0.204925,"male_years_left":3.44,"female_prob_death":0.165088,"female_years_left":4.08,"this_prob":1.0},
+{  "age":93,"male_prob_death":0.224931,"male_years_left":3.19,"female_prob_death":0.182685,"female_years_left":3.79,"this_prob":1.0},
+{  "age":94,"male_prob_death":0.245995,"male_years_left":2.97,"female_prob_death":0.201442,"female_years_left":3.53,"this_prob":1.0},
+{  "age":95,"male_prob_death":0.266884,"male_years_left":2.78,"female_prob_death":0.220406,"female_years_left":3.29,"this_prob":1.0},
+{  "age":96,"male_prob_death":0.287218,"male_years_left":2.61,"female_prob_death":0.239273,"female_years_left":3.08,"this_prob":1.0},
+{  "age":97,"male_prob_death":0.306593,"male_years_left":2.46,"female_prob_death":0.257714,"female_years_left":2.89,"this_prob":1.0},
+{  "age":98,"male_prob_death":0.324599,"male_years_left":2.33,"female_prob_death":0.275376,"female_years_left":2.72,"this_prob":1.0},
+{  "age":99,"male_prob_death":0.340829,"male_years_left":2.21,"female_prob_death":0.291899,"female_years_left":2.56,"this_prob":1.0},
+{  "age":100,"male_prob_death":0.35787,"male_years_left":2.09,"female_prob_death":0.309413,"female_years_left":2.41,"this_prob":1.0},
+{  "age":101,"male_prob_death":0.375764,"male_years_left":1.98,"female_prob_death":0.327978,"female_years_left":2.27,"this_prob":1.0},
+{  "age":102,"male_prob_death":0.394552,"male_years_left":1.88,"female_prob_death":0.347656,"female_years_left":2.13,"this_prob":1.0},
+{  "age":103,"male_prob_death":0.41428,"male_years_left":1.77,"female_prob_death":0.368516,"female_years_left":2,"this_prob":1.0},
+{  "age":104,"male_prob_death":0.434993,"male_years_left":1.68,"female_prob_death":0.390627,"female_years_left":1.87,"this_prob":1.0},
+{  "age":105,"male_prob_death":0.456743,"male_years_left":1.58,"female_prob_death":0.414064,"female_years_left":1.75,"this_prob":1.0},
+{  "age":106,"male_prob_death":0.47958,"male_years_left":1.49,"female_prob_death":0.438908,"female_years_left":1.64,"this_prob":1.0},
+{  "age":107,"male_prob_death":0.503559,"male_years_left":1.4,"female_prob_death":0.465243,"female_years_left":1.53,"this_prob":1.0},
+{  "age":108,"male_prob_death":0.528737,"male_years_left":1.32,"female_prob_death":0.493157,"female_years_left":1.43,"this_prob":1.0},
+{  "age":109,"male_prob_death":0.555174,"male_years_left":1.24,"female_prob_death":0.522747,"female_years_left":1.33,"this_prob":1.0},
+{  "age":110,"male_prob_death":0.582933,"male_years_left":1.16,"female_prob_death":0.554111,"female_years_left":1.23,"this_prob":1.0},
+{  "age":111,"male_prob_death":0.61208,"male_years_left":1.09,"female_prob_death":0.587358,"female_years_left":1.14,"this_prob":1.0},
+{  "age":112,"male_prob_death":0.642683,"male_years_left":1.02,"female_prob_death":0.622599,"female_years_left":1.06,"this_prob":1.0},
+{  "age":113,"male_prob_death":0.674818,"male_years_left":0.95,"female_prob_death":0.659955,"female_years_left":0.98,"this_prob":1.0},
+{  "age":114,"male_prob_death":0.708559,"male_years_left":0.89,"female_prob_death":0.699553,"female_years_left":0.9,"this_prob":1.0},
+{  "age":115,"male_prob_death":0.743986,"male_years_left":0.82,"female_prob_death":0.741526,"female_years_left":0.83,"this_prob":1.0},
+{  "age":116,"male_prob_death":0.781186,"male_years_left":0.76,"female_prob_death":0.781186,"female_years_left":0.76,"this_prob":1.0},
+{  "age":117,"male_prob_death":0.820245,"male_years_left":0.71,"female_prob_death":0.820245,"female_years_left":0.71,"this_prob":1.0},
+{  "age":118,"male_prob_death":0.861257,"male_years_left":0.65,"female_prob_death":0.861257,"female_years_left":0.65,"this_prob":1.0},
+{  "age":119,"male_prob_death":0.90432,"male_years_left":0.6,"female_prob_death":0.90432,"female_years_left":0.6,"this_prob":1.0}
+];
+
+
+    for ( i=0 ; i< life.length; i++ ) {
+            if (i<=USER_AGE ) {
+                life[i].this_prob= 1;
+            }
+            else {
+                 if (USER_SEX == "female") {
+                     life[i].this_prob = life[i-1].this_prob*(1-life[i].female_prob_death);
+                }
+                else {
+                    life[i].this_prob = life[i-1].this_prob*(1-life[i].male_prob_death);                }
+            }
+
+    }
+
+
+
+// Define SVG object old
+var svg = d3.select("#line-chart").append("svg")
+.attr("width", width + margin.left + margin.right)
+.attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+    svg.append("text")
+        .attr("x", x(0.54))
+        .attr("y", height+margin.bottom)
+        .attr("class", "subtitle")
+        .text("Additional Years to Live");
+
+
+
+
+
+svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+    svg.append("text")
+            .attr("class", "annotation")
+            .attr("transform", "translate("+x((0-0.007))+","+y((0))+")rotate(-90)")
+            .text("Chances this will happen");
+
+
+
+var life_path =      svg.append("path")
+                    .attr("class", "line")
+                    .attr("d", line(life.slice(USER_AGE,120)));
+
+
+var xat50 = findXatY(.5, life_path) ;
+var xat90 = findXatY(0.9, life_path);
+var xat10 = findXatY(.1, life_path) ;
+
+// 50% chance
+svg.append("line")
+      .attr("class", "annotation")
+            .attr("x1", x(0))
+            .attr("x2", xat50[0])
+            .attr("y1", y(0.5))
+            .attr("y2", y(0.5));
+svg.append("text")
+            .attr("class", "annotation")
+            .attr("transform", "translate("+x(0)+","+y(0.5+.006)+")")
+            .text("AVERAGE CHANCE");
+
+svg.append("line")
+      .attr("class", "annotation")
+            .attr("x1", xat50[0])
+            .attr("x2", xat50[0])
+            .attr("y1", y(0))
+            .attr("y2", y(0.5));
+svg.append("text")
+            .attr("class", "annotation")
+            .attr("transform", "translate("+ xat50[0] +","+y(0.1)+")rotate(-90)")
+            .text("AVERAGE ADDITIONAL YEARS");
+
+// 50% chance
+svg.append("line")
+      .attr("class", "annotation")
+            .attr("x1", x(0))
+            .attr("x2", xat50[0])
+            .attr("y1", y(0.5))
+            .attr("y2", y(0.5));
+svg.append("text")
+            .attr("class", "annotation")
+            .attr("transform", "translate("+x(0)+","+y(0.5+.006)+")")
+            .text("AVERAGE CHANCE");
+
+svg.append("line")
+      .attr("class", "annotation")
+            .attr("x1", xat50[0])
+            .attr("x2", xat50[0])
+            .attr("y1", y(0))
+            .attr("y2", y(0.5));
+svg.append("text")
+            .attr("class", "annotation")
+            .attr("transform", "translate("+ xat50[0] +","+y(0.1)+")rotate(-90)")
+            .text("AVERAGE ADDITIONAL YEARS");
+
+// 90% chance
+svg.append("line")
+      .attr("class", "annotation")
+            .attr("x1", x(0))
+            .attr("x2", xat90[0])
+            .attr("y1", y(0.9))
+            .attr("y2", y(0.9));
+svg.append("text")
+            .attr("class", "annotation")
+            .attr("transform", "translate("+x(0)+","+y(0.9+.006)+")")
+            .text("VERY HIGH CHANCE");
+
+svg.append("line")
+      .attr("class", "annotation")
+            .attr("x1", xat90[0])
+            .attr("x2", xat90[0])
+            .attr("y1", y(0))
+            .attr("y2", y(0.9));
+svg.append("text")
+            .attr("class", "annotation")
+            .attr("transform", "translate("+ xat90[0] +","+y(0.1)+")rotate(-90)")
+            .text("90% ADDITIONAL YEARS");
+
+// 10% chance
+svg.append("line")
+      .attr("class", "annotation")
+            .attr("x1", x(0))
+            .attr("x2", xat10[0])
+            .attr("y1", y(0.1))
+            .attr("y2", y(0.1));
+svg.append("text")
+            .attr("class", "annotation")
+            .attr("transform", "translate("+x(0)+","+y(0.1+.006)+")")
+            .text("A SMALL CHANCE");
+
+svg.append("line")
+      .attr("class", "annotation")
+            .attr("x1", xat10[0])
+            .attr("x2", xat10[0])
+            .attr("y1", y(0))
+            .attr("y2", y(0.1));
+svg.append("text")
+            .attr("class", "annotation")
+            .attr("transform", "translate("+ xat10[0] +","+y(0.1)+")rotate(-90)")
+            .text("10% ADDITIONAL YEARS");
+
+    // First simulation and move.
+var end_age = simOneLife(USER_AGE, USER_SEX, life);
+var indicatorPoint = svg.append("circle")
+        .attr("r", circle_radius)
+        .style('opacity', 0)
+        .attr("transform", function() {
+                return "translate(" + x(end_age-USER_AGE) + "," + y(life[end_age].this_prob) + ")";
+        });
+
+var indicatorText = svg.append("text")
+        .style('opacity',0)
+        .attr("transform", function() {
+                return "translate(" + x(end_age-USER_AGE) + "," + y(life[end_age].this_prob) + ")";
+        })
+        .text(end_age);
+transition_fn();
+function transition_fn() {
+indicatorPoint.style('opacity',1);
+indicatorPoint
+         .attr("transform", function() {
+                return "translate(" + x(end_age-USER_AGE) + "," + y(life[end_age].this_prob) + ")";
+        })
+
+        .transition()
+            .duration(3250)
+            .style('opacity',0)
+            .attr("fill", "green")
+            .each("end",showText);
+//            .remove();
+}
+function showText() {
+
+var indicTrans = indicatorText
+        .attr("transform", function() {
+                return "translate(" + x(end_age-USER_AGE) + "," + y(life[end_age].this_prob) + ")";
+        })
+        .text(end_age)
+            .transition()
+            .duration(4250)
+            .style('opacity',1);
+//            .each("end",transition_fn);
+
+indicTrans.transition()
+            .duration(4250)
+            .style('opacity',0)
+            .each("end",transition_fn);
+
+end_age = simOneLife(USER_AGE, USER_SEX, life);
+}
+//var indicText = indicTransition.transition()
+//        .attr("fill", "red")
+//        .style('opacity',1)
+//        .attr("transform", function() {
+//                return "translate(" + x(end_age-USER_AGE) + "," + y(life[end_age].this_prob) + ")";
+//        });
+
+//var indicatorText = svg.append("text")
+//        .style('opacity',0)
+//        .attr("transform", function() {
+//                return "translate(" + x(end_age-USER_AGE) + "," + y(life[end_age].this_prob) + ")";
+//        })
+//        .text(end_age);
+
+//indicatorText.transition()
+//            .duration(4250)
+//            .style('opacity',1);
+
+//svg.select("circle").remove();
+//svg.append("text")
+//            .attr("class", "annotation")
+//            .attr("transform", "translate("+ xat10[0] +","+y(0.1)+")rotate(-90)")
+//            .text("DUMMY");
+
+
+
+function findXatY( y, linePath) {
+    function getXY(len) {
+       var pathEl = linePath.node();
+       var point = pathEl.getPointAtLength(len);
+       point.y = (height - point.y)/height;
+// don't want this        point.x = (120-USER_AGE)*point.x/width;
+       return([point.x, point.y]);
+    }
+    var curlen = .0;
+    len_inc = Math.sqrt(height*height + width*width)*.005;
+    while (getXY(curlen)[1] > y)  {curlen += len_inc;}
+    return(getXY(curlen))
+}
+
+
+</script>

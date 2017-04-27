@@ -1,0 +1,301 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+body {
+  font: 12px Arial;
+}
+/* change wirdth to 480 from 1090 changed it back */
+#main-wrapper {
+  width: 1090px;
+}
+
+#controls {
+  font-family: 'Inconsolata', Monaco, "Lucida Console", Consolas, "Courier New";
+  font-size: 24px;
+  width: 675px;
+  margin: 0 auto;
+}
+
+#controls ul {
+  display: inline;
+}
+
+#controls .sentence {
+  float: left;
+  padding: 10px 0;
+}
+
+#speed {
+  font-family: 'Inconsolata', Monaco, "Lucida Console", Consolas, "Courier New";
+  font-size: 13px;
+  text-transform: uppercase;
+  margin-top: 12px;
+  width: 90px;
+  float: right;
+}
+
+#speed .togglebutton {
+  padding: 2px 3px;
+  text-align: center;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+#speed .togglebutton.slow {
+  border-bottom: none;
+}
+
+#speed .togglebutton.current {
+  color: #fff;
+  background: #000;
+}
+
+.dropdown-wrapper {
+  position: relative;
+  width: 120px;
+  padding: 10px 15px;
+  float: left;
+  margin: 0 10px;
+  background: #fff;
+  border-bottom: 4px solid #000;
+  cursor: pointer;
+  outline: none;
+  font-weight: bold;
+}
+
+.dropdown-wrapper:after {
+  content: "";
+  width: 0;
+  height: 0;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  margin-top: -3px;
+  border-width: 6px 6px 0 6px;
+  border-style: solid;
+  border-color: #000 transparent;
+}
+
+.dropdown-wrapper .dropdown {
+  position: absolute;
+  top: 100%;
+  left: -5px;
+  right: 0px;
+  background: white;
+  transition: all 0.3s ease-out;
+  list-style: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dropdown-wrapper .dropdown li {
+  display: block;
+  text-decoration: none;
+  color: #000;
+  border-left: 3px solid;
+  padding: 10px;
+  transition: all 0.2s ease-out;
+}
+
+.dropdown-wrapper .dropdown li:hover {
+  color: #00cece;
+  background: #e0e0e0;
+}
+
+.dropdown-wrapper.active:after {
+  border-width: 0 6px 6px 6px;
+}
+
+.dropdown-wrapper.active .dropdown {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#age {
+  width: 160px;
+  text-align: center;
+  float: left;
+  padding-top: 10px;
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+#sliderholder {
+  width: 160px;
+}
+
+#sliderholder .axis .domain {
+  fill: none;
+  stroke: #333;
+  stroke-opacity: .4;
+  stroke-width: 4px;
+  stroke-linecap: square;
+}
+
+.axis .halo {
+  fill: none;
+  stroke: #000;
+  stroke-width: 4px;
+  stroke-linecap: square;
+}
+
+.slider .handle {
+  fill: #fff;
+  stroke: #000;
+  stroke-opacity: 1;
+  stroke-width: 1.25px;
+  pointer-events: none;
+}
+
+#line-chart text.subtitle {
+  font-family: 'Inconsolata', Monaco, "Lucida Console", Consolas, "Courier New";
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+#line-chart line.annotation {
+  stroke: #999;
+}
+
+#line-chart text.annotation, #line-chart .agehighlight text {
+  font-family: 'Inconsolata', Monaco, "Lucida Console", Consolas, "Courier New";
+  font-size: 14px;
+  fill: #444;
+  text-anchor: left;
+}
+
+#line-chart .agehighlight text {
+  fill: #000;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#line-chart .agehighlight line {
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+#line-chart .agehighlight rect {
+  fill: #e0e0e0;
+}
+
+path {
+  stroke: #00cece;
+  stroke-width: 4;
+  fill: none;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: grey;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-family: 'Inconsolata', Monaco, "Lucida Console", Consolas, "Courier New";
+  font-size: 14px;
+}
+
+.y.axis .domain {
+  display: none;
+}
+
+.y.axis line {
+  stroke-width: 1px;
+  stroke: #ccc;
+  stroke-dasharray: 1, 1;
+}
+
+.baseline line {
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+.indicator line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+circle.death {
+  fill: grey;
+}
+
+#bars {
+  margin-bottom: 0px;
+  border-bottom: 1px dotted #ccc;
+}
+
+#bars rect {
+  fill: grey;
+}
+
+#counters {
+  font-family: 'Inconsolata', Monaco, "Lucida Console", Consolas, "Courier New";
+  width: 787px;
+  padding-top: 30px;
+  margin: 0 auto;
+}
+
+#counters h2 {
+  font-size: 18px;
+  padding-left: 30px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+#counters .countbin {
+  float: left;
+  text-align: center;
+  width: 130px;
+  border-left: 1px solid #ccc;
+}
+
+#counters .countbin h3 {
+  font-size: 16px;
+}
+
+#counters .countbin .pct {
+  font-size: 30px;
+  margin: 10px 0 4px 0;
+}
+
+#counters .countbin .cnt {
+  font-size: 14px;
+  color: #888;
+}
