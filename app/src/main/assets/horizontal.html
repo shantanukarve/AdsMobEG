@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
     <![endif]-->
     <!-- tell iPhone not to shrink mobile website -->
-    <meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
+<!--    <meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/> -->
 
     <link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
 </head>
@@ -38,8 +38,21 @@ var USER_SEX = 'female';
 var CURR_AGE = 0;
 USER_DURATION = 32;
 CURR_AGE = USER_AGE;
-var width_base =  window.innerWidth;
-var height_base = window.innerHeight;
+
+// Works fine for web not so muchfor mobile
+
+var ws_w =  screen.innerWidth;
+var ws_h = screen.innerHeight;
+
+//TODO later detect orientation change and redraw the whole thing - in fact there are quite some subtleties to work out
+var width_base =  Android.getWinWidth();
+var height_base = Android.getWinHeight();
+
+console.log('width=' + width_base);
+console.log('height=' + height_base);
+
+console.log('old width=' +ws_w);
+console.log('old height='+ws_h);
 
 var circle_radius = width_base*.005;
 // console.log('circle radius',circle_radius);
@@ -49,8 +62,9 @@ if ( circle_radius < 6 ) {
 var AGE_LOWER = Math.max(0,USER_AGE -30);
 
 // Set dimensions - chart if offset down and to the right so make widths and heights 2*smaller
-var margin = {top: 35, right: 0.05*width_base, bottom: 40, left: 0.05*width_base},
-    width = width_base - 2*margin.left - margin.right,
+//var margin = {top: 35, right: 0.05*width_base, bottom: 40, left: 0.05*width_base},
+var margin = {top: 35, right: 0.05*width_base, bottom: 40, left: 0.15*width_base},
+    width = width_base - 1*margin.left - margin.right,
     height = height_base - 2*margin.top - margin.bottom;
 
 // Set ranges
@@ -80,6 +94,7 @@ var yAxis = d3.svg.axis().scale(y)
     .tickFormat(function(d) {
         return (d*100) + "%";
     })
+
     .tickSize(20);
 
 // Define line this is a helper function

@@ -1,6 +1,9 @@
 package com.adsmobeg.tarat.foofragment;
 
 /**
+ * Created by karve on 5/3/17.
+ */
+/**
  * Created by karve on 4/27/17.
  */
 import android.animation.ArgbEvaluator;
@@ -23,19 +26,20 @@ import android.webkit.JsResult;
 
 import com.adsmobeg.tarat.adsmobeg.R;
 
-public class FooFragment extends Fragment {
+
+public class FooFragment2 extends Fragment {
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
     private WebView mWebView;
 
- /*   @Override
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         View view = inflater
-                .inflate(R.layout.webfragment, parent, false);
+                .inflate(R.layout.webfragment2, parent, false);
 
-        mWebView = (WebView) view.findViewById(R.id.simulate_view);
+        mWebView = (WebView) view.findViewById(R.id.simulate_view2);
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
@@ -60,23 +64,10 @@ public class FooFragment extends Fragment {
         mWebView.loadUrl("file:///android_asset/horizontal.html");
         return view;
     }
-*/ // The one that works
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        // Defines the xml file for the fragment
-        View view =  inflater.inflate(R.layout.webfragment, parent, false);
-        ValueAnimator skyAnim = ObjectAnimator.ofInt(view.findViewById(R.id.green_bg_text),"backgroundColor",
-                Color.rgb(0x66, 0xcc, 0xff), Color.rgb(0x00, 0x66, 0x99));
-        skyAnim.setDuration(3000);
-        skyAnim.setRepeatCount(ValueAnimator.INFINITE);
-        skyAnim.setRepeatMode(ValueAnimator.REVERSE);
-        skyAnim.setEvaluator(new ArgbEvaluator());
-        skyAnim.start();
-        return view;
-    }
-
-    // This event is triggered soon after onCreateView().
+   // This event is triggered soon after onCreateView().
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
-/*    @Override
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // Setup any handles to view objects here
         // EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
@@ -96,7 +87,6 @@ public class FooFragment extends Fragment {
         public int getWinWidth() {
             return mWebView.getWidth();
         }
-    }*/
+    }
+
 }
-
-
