@@ -6,15 +6,11 @@
     android:layout_height="match_parent"
     android:background="@drawable/shape_green_rect">
 
- <!--   <WebView
+   <WebView
         android:id="@+id/simulate_view"
         android:padding="0dp"
         android:layout_width="368dp"
         android:layout_height="495dp"
         tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp" /> -->
-    <TextView android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/green_bg_text"
-        android:text="This light green background with a dark green border is done by setting the background of the main layout to @drawable/shape_green_rect\n\nThe margins between the text and the edge of the screen are defined by the drawable."/>
-</android.support.constraint.ConstraintLayout>
+        tools:layout_editor_absoluteX="8dp" />
+ </android.support.constraint.ConstraintLayout>

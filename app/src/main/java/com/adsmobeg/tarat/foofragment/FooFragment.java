@@ -28,7 +28,7 @@ public class FooFragment extends Fragment {
     // either dynamically or via XML layout inflation.
     private WebView mWebView;
 
- /*   @Override
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -60,8 +60,8 @@ public class FooFragment extends Fragment {
         mWebView.loadUrl("file:///android_asset/horizontal.html");
         return view;
     }
-*/ // The one that works
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+ // The one that works
+/*    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
         View view =  inflater.inflate(R.layout.webfragment, parent, false);
         ValueAnimator skyAnim = ObjectAnimator.ofInt(view.findViewById(R.id.green_bg_text),"backgroundColor",
@@ -73,7 +73,7 @@ public class FooFragment extends Fragment {
         skyAnim.start();
         return view;
     }
-
+*/
     // This event is triggered soon after onCreateView().
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
 /*    @Override
@@ -81,7 +81,7 @@ public class FooFragment extends Fragment {
         // Setup any handles to view objects here
         // EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
     }
-
+*/
     public class WebAppInterface {
         Context mContext;
 
@@ -96,7 +96,7 @@ public class FooFragment extends Fragment {
         public int getWinWidth() {
             return mWebView.getWidth();
         }
-    }*/
+    }
 }
 
 
